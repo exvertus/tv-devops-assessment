@@ -1,0 +1,39 @@
+{
+  "name": "express-ts-app",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=20.10.0",
+    "npm": ">=11.0.0"
+  },
+  "description": "TurboVets DevOps Assessment for Tom Flanigan",
+  "main": "dist/server.js",
+  "scripts": {
+    "lint": "eslint src",
+    "test": "jest",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.13",
+    "@types/supertest": "^6.0.3",
+    "jest": "^30.2.0",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.6",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.49.0"
+  }
+}
