@@ -1,3 +1,7 @@
-node_modules/
-dist/
+# Ignore .env files everywhere
 .env
+**/.env
+
+# Allow example env files
+!.env.example
+**/!.env.example
