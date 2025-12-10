@@ -23,6 +23,7 @@ jobs:
           node-version: '24'
           cache: 'npm'
           cache-dependency-path: app/package-lock.json
+
       - name: Install dependencies
         working-directory: ./app
         run: npm ci
@@ -69,6 +70,9 @@ jobs:
           node-version: 24
           cache: 'npm'
           cache-dependency-path: iac/package-lock.json
+      - name: Use Terraform
+        uses: hashicorp/setup-terraform@v3
+
       - name: Install IaC dependencies
         working-directory: ./iac
         run: npm ci
