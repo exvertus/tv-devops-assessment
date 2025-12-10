@@ -1,7 +1,7 @@
-name: Destroy Infrascructure
+name: Destroy Infrastructure
 
 on:
-  workflow_dispatch:   # manually trigger only
+  workflow_dispatch:
 
 jobs:
   destroy-iac:
