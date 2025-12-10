@@ -1,46 +1,12 @@
-name: CI/CD Pipeline
+name: Destroy Infrascructure
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-  workflow_dispatch:
+  workflow_dispatch:   # manually trigger only
 
 jobs:
-
-  app-ci:
-    name: Build, Lint, Test, Compile
+  destroy-iac:
+    name: Destroy IaC with CDKTF
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: app/package-lock.json
-
-      - name: Install dependencies
-        working-directory: ./app
-        run: npm ci
-      - name: Lint source code
-        working-directory: ./app
-        run: npm run lint
-      - name: Run tests
-        working-directory: ./app
-        run: npm test
-      - name: Build TypeScript
-        working-directory: ./app
-        run: npm run build
-
-  deploy-iac:
-    name: Deploy IaC with CDKTF
-    runs-on: ubuntu-latest
-    needs: app-ci
     env:
       TF_VAR_project: ${{ vars.TF_VAR_project }}
       TF_VAR_service: ${{ vars.TF_VAR_service }}
@@ -52,9 +18,6 @@ jobs:
       TF_VAR_az2: ${{ vars.TF_VAR_az2 }}
       TF_VAR_task_cpu: ${{ vars.TF_VAR_task_cpu }}
       TF_VAR_task_memory: ${{ vars.TF_VAR_task_memory }}
-    defaults:
-      run:
-        shell: bash
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -63,7 +26,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.TF_VAR_region }}
+          aws-region: ${{ env.TF_VAR_region }
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -79,6 +42,6 @@ jobs:
       - name: Synthesize Terraform
         working-directory: ./iac
         run: npm run synth
-      - name: Deploy IaC (cdktf deploy)
+      - name: Destroy Infrastructure (cdktf destroy)
         working-directory: ./iac
-        run: npm run deploy
+        run: npm run destroy
