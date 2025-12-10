@@ -2,6 +2,7 @@ import { Construct } from "constructs";
 import { App, TerraformStack, TerraformOutput } from "cdktf";
 
 import { AwsProvider } from "@cdktf/provider-aws/lib/provider";
+import { S3Backend } from "cdktf";
 // Networking
 import { Vpc } from "@cdktf/provider-aws/lib/vpc";
 import { Subnet } from "@cdktf/provider-aws/lib/subnet";
@@ -25,7 +26,11 @@ import { LbListener } from "@cdktf/provider-aws/lib/lb-listener";
 import { LbTargetGroup } from "@cdktf/provider-aws/lib/lb-target-group";
 import { EcsService } from "@cdktf/provider-aws/lib/ecs-service";
 
+// import * as dotenv from 'dotenv';
+
 import { loadConfig } from "./variables";
+
+// dotenv.config();
 
 export class IacStack extends TerraformStack {
   constructor(scope: Construct, id: string) {
@@ -38,6 +43,15 @@ export class IacStack extends TerraformStack {
     // ---------------------------
     new AwsProvider(this, "aws", {
       region: config.region,
+    });
+
+    new S3Backend(this, {
+      // TODO: Switch these to not be hardcoded.
+      bucket: "tv-tfstate-thomasflanigan",
+      key: "iac/terraform.tfstate",
+      region: "us-east-2",
+      dynamodbTable: "tv-tfstate-locks-thomasflanigan",
+      encrypt: true,
     });
 
     // ---------------------------

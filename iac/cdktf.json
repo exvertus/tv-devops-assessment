@@ -5,5 +5,15 @@
   "sendCrashReports": "false",
   "terraformProviders": [],
   "terraformModules": [],
-  "context": {}
+  "context": {
+    "backend": {
+      "s3": {
+        "bucket": "tv-tfstate-thomasflanigan",
+        "key": "iac/terraform.tfstate",
+        "region": "us-east-2",
+        "dynamodb_table": "tv-tfstate-locks-thomasflanigan",
+        "encrypt": true
+      }
+    }
+  }
 }
