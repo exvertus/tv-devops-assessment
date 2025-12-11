@@ -91,13 +91,12 @@ jobs:
         working-directory: ./iac
         run: |
           npx cdktf output --json > tf_output.json
-          ls -a
-          # ECR_REPOSITORY_URL=$(jq -r '.ecr_repository_url' tf_outputs.json)
-          # ECR_REGISTRY_HOST=$(jq -r '.ecr_registry_host' tf_outputs.json)
-          # ECR_REPOSITORY_NAME=$(jq -r '.ecr_repository_name' tf_outputs.json)
-          # echo "ECR_REPOSITORY_URL=$ECR_REPOSITORY_URL"
-          # echo "ECR_REGISTRY_HOST=$ECR_REGISTRY_HOST"
-          # echo "ECR_REPOSITORY_NAME=$ECR_REPOSITORY_NAME"
+          ECR_REPOSITORY_URL=$(jq -r '.ecr_repository_url' tf_output.json)
+          ECR_REGISTRY_HOST=$(jq -r '.ecr_registry_host' tf_output.json)
+          ECR_REPOSITORY_NAME=$(jq -r '.ecr_repository_name' tf_output.json)
+          echo "ECR_REPOSITORY_URL=$ECR_REPOSITORY_URL"
+          echo "ECR_REGISTRY_HOST=$ECR_REGISTRY_HOST"
+          echo "ECR_REPOSITORY_NAME=$ECR_REPOSITORY_NAME"
           # echo "ECR_REPOSITORY_URL=$ECR_REPOSITORY_URL" >> $GITHUB_OUTPUT
           # echo "ECR_REGISTRY_HOST=$ECR_REGISTRY_HOST" >> $GITHUB_OUTPUT
           # echo "ECR_REPOSITORY_NAME=$ECR_REPOSITORY_NAME" >> $GITHUB_OUTPUT
