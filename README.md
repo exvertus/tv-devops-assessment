@@ -1,3 +1,5 @@
+![CI/CD Status](https://github.com/exvertus/tv-devops-assessment/actions/workflows/main.yml/badge.svg)
+
 # 🚀 DevOps Assessment – Full Lifecycle Challenge
 
 **Estimated Time:** 4–8 hours
