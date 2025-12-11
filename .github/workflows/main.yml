@@ -107,9 +107,9 @@ jobs:
     steps:
       - name: Debug Outputs
         run: |
-          echo "Repo URL: ${{ needs.deploy-iac.tf_outputs.ecr_repository_url }}"
-          echo "Registry Host: ${{ needs.deploy-iac.tf_outputs.ecr_registry_host }}"
-          echo "Repo Name: ${{ needs.deploy-iac.tf_outputs.ecr_repository_name }}"
+          echo "Repo URL: ${{ needs.deploy-iac.outputs.ecr_repository_url }}"
+          echo "Registry Host: ${{ needs.deploy-iac.outputs.ecr_registry_host }}"
+          echo "Repo Name: ${{ needs.deploy-iac.outputs.ecr_repository_name }}"
       # - name: Checkout repository
       #   uses: actions/checkout@v4
       # - name: Configure AWS credentials
