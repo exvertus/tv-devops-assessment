@@ -1,5 +1,7 @@
 .env
 !.env.example
+tf_output.json
+raw_tf_output.txt
 
 *.d.ts
 *.js
