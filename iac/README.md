@@ -8,6 +8,15 @@
 ## Deploying
 
 ### From GitHub (easier and preferred)
+- Setup
+  - [Update Secrets](https://github.com/exvertus/tv-devops-assessment/settings/secrets/actions) to use your AWS account:
+    - `AWS_ACCESS_KEY_ID` -> [YOUR_ID]
+    - `AWS_SECRET_ACCESS_KEY` -> [YOUR_KEY]
+  - [Update Variables](https://github.com/exvertus/tv-devops-assessment/settings/variables/actions)
+    - `TF_BACKEND_BUCKET` -> [YOUR_BACKEND_BUCKET]
+    - `TF_BACKEND_KEY` -> [YOUR_BACKEND_KEY]
+    - `TF_BACKEND_REGION` -> [YOUR_BACKEND_REGION]
+    - `TF_BACKEND_DDB` -> [YOUR_BACKEND_DYNAMO_DB]
 - Run [main pipeline](https://github.com/exvertus/tv-devops-assessment/actions/workflows/main.yml) via GitHub Actions to build image and deploy IaC.
   - Can be manually triggered.
   - Also triggers off changes to the main branch.
@@ -37,6 +46,10 @@ Fill out the environment variable values.
 The AWS ID and Key are required. All TF_VAR_* variables may be changed, or left on their defaults:
 - **AWS_ACCESS_KEY_ID**: AWS Key ID for deploying infra.
 - **AWS_SECRET_ACCESS_KEY**: AWS Key for deploying infra.
+- **TF_BACKEND_BUCKET**: Backend bucket.
+- **TF_BACKEND_KEY**: Backend key.
+- **TF_BACKEND_REGION**: Backend region.
+- **TF_BACKEND_DDB**= Backend DynamoDB.
 - **TF_VAR_project**: Project name. 
 - **TF_VAR_service**: Service name.
 - **TF_VAR_env**: Environment name.

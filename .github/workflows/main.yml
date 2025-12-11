@@ -52,6 +52,10 @@ jobs:
       TF_VAR_az2: ${{ vars.TF_VAR_az2 }}
       TF_VAR_task_cpu: ${{ vars.TF_VAR_task_cpu }}
       TF_VAR_task_memory: ${{ vars.TF_VAR_task_memory }}
+      TF_BACKEND_BUCKET: ${{ vars.TF_BACKEND_BUCKET }}
+      TF_BACKEND_REGION: ${{ vars.TF_BACKEND_REGION }}
+      TF_BACKEND_DDB_TABLE: ${{ vars.TF_BACKEND_DDB_TABLE }}
+      TF_BACKEND_KEY: ${{ vars.TF_BACKEND_KEY }}
     outputs:
       ecr_repository_url: ${{ steps.tf_outputs.outputs.ECR_REPOSITORY_URL }}
       ecr_registry_host: ${{ steps.tf_outputs.outputs.ECR_REGISTRY_HOST }}
@@ -149,6 +153,10 @@ jobs:
       - deploy-iac
       - image-build-push
     env:
+      TF_BACKEND_BUCKET: ${{ vars.TF_BACKEND_BUCKET }}
+      TF_BACKEND_REGION: ${{ vars.TF_BACKEND_REGION }}
+      TF_BACKEND_DDB_TABLE: ${{ vars.TF_BACKEND_DDB_TABLE }}
+      TF_BACKEND_KEY: ${{ vars.TF_BACKEND_KEY }}
       AWS_REGION: ${{ vars.TF_VAR_region }}
       IMAGE_TAG: ${{ github.sha }}
     steps:

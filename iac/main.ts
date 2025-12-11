@@ -26,11 +26,11 @@ import { LbListener } from "@cdktf/provider-aws/lib/lb-listener";
 import { LbTargetGroup } from "@cdktf/provider-aws/lib/lb-target-group";
 import { EcsService } from "@cdktf/provider-aws/lib/ecs-service";
 
-// import * as dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 
 import { loadConfig } from "./variables";
 
-// dotenv.config();
+dotenv.config();
 
 export class IacStack extends TerraformStack {
   constructor(scope: Construct, id: string) {
@@ -46,11 +46,10 @@ export class IacStack extends TerraformStack {
     });
 
     new S3Backend(this, {
-      // TODO: Switch these to not be hardcoded.
-      bucket: "tv-tfstate-thomasflanigan",
-      key: "iac/terraform.tfstate",
-      region: "us-east-2",
-      dynamodbTable: "tv-tfstate-locks-thomasflanigan",
+      bucket: process.env.TF_BACKEND_BUCKET!,
+      key: process.env.TF_BACKEND_KEY!,
+      region: process.env.TF_BACKEND_REGION!,
+      dynamodbTable: process.env.TF_BACKEND_DDB!,
       encrypt: true,
     });
 
