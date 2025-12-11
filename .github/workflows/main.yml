@@ -104,31 +104,28 @@ jobs:
     needs: deploy-iac
     env:
       AWS_REGION: ${{ vars.TF_VAR_region }}
+      TF_VAR_image_tag: ${{ github.sha }}
     steps:
       - name: Debug Outputs
         run: |
           echo "Repo URL: ${{ needs.deploy-iac.outputs.ecr_repository_url }}"
           echo "Registry Host: ${{ needs.deploy-iac.outputs.ecr_registry_host }}"
           echo "Repo Name: ${{ needs.deploy-iac.outputs.ecr_repository_name }}"
-      # - name: Checkout repository
-      #   uses: actions/checkout@v4
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v4
-      #   with:
-      #     aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region:            ${{ env.AWS_REGION }}
-      # - name: Login to Amazon ECR
-      #   uses: aws-actions/amazon-ecr-login@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ env.AWS_REGION }}
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
 
-      # - name: Retrieve ECR Repository URL from Terraform Output
-      #   id: tfoutput
-      #   working-directory: ./iac
-      #   run: |
-      #     REPO=$(npx cdktf output ecr_repository_url)
-      #     echo "repo_url=$REPO" >> $GITHUB_OUTPUT
-      # - name: Build Docker image
-      #   working-directory: ./app
-      #   run: docker build -t ${{ steps.tfoutput.outputs.repo_url }} .
+      - name: Build Docker image
+        working-directory: ./app
+        run: |
+          echo "Will push to ${{ needs.deploy-iac.outputs.ecr_repository_url }}:${{ env.TF_VAR_image_tag }}"
+          # docker build -t ${{ needs.deploy-iac.outputs.ecr_repository_url }}:${{ env.TF_VAR_image_tag }} .
       # - name: Push Docker image
-      #   run: docker push ${{ steps.tfoutput.outputs.repo_url }}
+      #   run: docker push ${{ needs.deploy-iac.outputs.ecr_repository_url }}:${{ env.TF_VAR_image_tag }}
