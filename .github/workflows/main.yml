@@ -176,46 +176,46 @@ jobs:
             --output text)
           echo "TASK_ARN=$TASK_ARN" >> $GITHUB_ENV
 
-      # - name: Create new Task Definition revision with new image
-      #   id: new_taskdef
-      #   run: |
-      #     # Download current task definition JSON
-      #     aws ecs describe-task-definition \
-      #       --task-definition "$TASK_ARN" \
-      #       --query "taskDefinition" \
-      #       > taskdef.json
+      - name: Create new Task Definition revision with new image
+        id: new_taskdef
+        run: |
+          # Download current task definition JSON
+          aws ecs describe-task-definition \
+            --task-definition "$TASK_ARN" \
+            --query "taskDefinition" \
+            > taskdef.json
 
-      #     # Modify only the container image
-      #     NEW_IMAGE="${{ needs.deploy-iac.outputs.ecr_repository_url }}:${IMAGE_TAG}"
+          # Modify only the container image
+          NEW_IMAGE="${{ needs.deploy-iac.outputs.ecr_repository_url }}:${IMAGE_TAG}"
 
-      #     # Update image with jq
-      #     cat taskdef.json | \
-      #       jq ".containerDefinitions[0].image = \"$NEW_IMAGE\"" \
-      #       > new-taskdef.json
+          # Update image with jq
+          cat taskdef.json | \
+            jq ".containerDefinitions[0].image = \"$NEW_IMAGE\"" \
+            > new-taskdef.json
 
-      #     # Register new revision
-      #     NEW_TASKDEF_ARN=$(aws ecs register-task-definition \
-      #       --cli-input-json file://new-taskdef.json \
-      #       --query "taskDefinition.taskDefinitionArn" \
-      #       --output text)
+          # Register new revision
+          NEW_TASKDEF_ARN=$(aws ecs register-task-definition \
+            --cli-input-json file://new-taskdef.json \
+            --query "taskDefinition.taskDefinitionArn" \
+            --output text)
 
-      #     echo "NEW_TASKDEF_ARN=$NEW_TASKDEF_ARN" >> $GITHUB_ENV
+          echo "NEW_TASKDEF_ARN=$NEW_TASKDEF_ARN" >> $GITHUB_ENV
 
-      # - name: Update ECS Service to new revision
-      #   run: |
-      #     aws ecs update-service \
-      #       --cluster "$ECS_CLUSTER_NAME" \
-      #       --service "$ECS_SERVICE_NAME" \
-      #       --task-definition "$NEW_TASKDEF_ARN"
+      - name: Update ECS Service to new revision
+        run: |
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER_NAME" \
+            --service "$ECS_SERVICE_NAME" \
+            --task-definition "$NEW_TASKDEF_ARN"
 
-      # - name: Wait for ECS deployment to stabilize
-      #   run: |
-      #     aws ecs wait services-stable \
-      #       --cluster "$ECS_CLUSTER_NAME" \
-      #       --services "$ECS_SERVICE_NAME"
+      - name: Wait for ECS deployment to stabilize
+        run: |
+          aws ecs wait services-stable \
+            --cluster "$ECS_CLUSTER_NAME" \
+            --services "$ECS_SERVICE_NAME"
 
-      # - name: Show Health Check URL
-      #   run: |
-      #     echo "Deployment successful!"
-      #     echo "Health Check URL:"
-      #     echo "${TG_URL}"
+      - name: Show Health Check URL
+        run: |
+          echo "Deployment successful!"
+          echo "Health Check URL:"
+          echo "${TG_URL}"
