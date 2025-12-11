@@ -1,12 +1,18 @@
 ## Infrastructure as Code for AWS's ECS
 
-### IAC design notes
-- TODO: Fill this out
+### Infrastructure Overview
+- This stack provisions a complete AWS environment for running a containerized Node.js API on ECS Fargate, including networking, security, compute, and observability components.
+- It creates an isolated VPC with public and private subnets, an internet gateway, a NAT gateway, and routing needed for secure outbound access.
+- An ECR repository stores application images, while an ECS cluster, task definition, and service—fronted by an Application Load Balancer—run the workload across multiple Availability Zones.
 
 ## Deploying
 
 ### From GitHub (easier and preferred)
-- TODO: Fill this out
+- Run [main pipeline](https://github.com/exvertus/tv-devops-assessment/actions/workflows/main.yml) via GitHub Actions to build image and deploy IaC.
+  - Can be manually triggered.
+  - Also triggers off changes to the main branch.
+  - The 'Show Health Check URL' step in the final job will display the health check for testing.
+- To destroy the infrastructure, use the [destroy job](https://github.com/exvertus/tv-devops-assessment/actions/workflows/destroy.yml) (manual trigger only)
 
 ### From a local environment
 
