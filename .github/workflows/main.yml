@@ -100,7 +100,18 @@ jobs:
           aws-region:            ${{ env.AWS_REGION }}
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
+              - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+          cache-dependency-path: iac/package-lock.json
+      - name: Use Terraform
+        uses: hashicorp/setup-terraform@v3
 
+      - name: Install IaC dependencies
+        working-directory: ./iac
+        run: npm ci
       - name: Retrieve ECR Repository URL from Terraform Output
         id: tfoutput
         working-directory: ./iac
