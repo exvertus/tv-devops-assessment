@@ -100,7 +100,7 @@ jobs:
           aws-region:            ${{ env.AWS_REGION }}
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
-              - name: Use Node.js
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
