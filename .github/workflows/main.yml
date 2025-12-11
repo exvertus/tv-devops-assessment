@@ -188,10 +188,19 @@ jobs:
           # Modify only the container image
           NEW_IMAGE="${{ needs.deploy-iac.outputs.ecr_repository_url }}:${IMAGE_TAG}"
 
-          # Update image with jq
-          cat taskdef.json | \
-            jq ".containerDefinitions[0].image = \"$NEW_IMAGE\"" \
-            > new-taskdef.json
+          # Clean the task definition file to remove non-registerable fields
+          cat taskdef.json | jq '
+            del(
+              .taskDefinitionArn,
+              .revision,
+              .status,
+              .registeredAt,
+              .registeredBy,
+              .compatibilities,
+              .requiresAttributes
+            )
+            | .containerDefinitions[0].image = "'$NEW_IMAGE'"
+          ' > new-taskdef.json
 
           # Register new revision
           NEW_TASKDEF_ARN=$(aws ecs register-task-definition \
