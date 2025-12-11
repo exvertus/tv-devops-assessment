@@ -52,6 +52,10 @@ jobs:
       TF_VAR_az2: ${{ vars.TF_VAR_az2 }}
       TF_VAR_task_cpu: ${{ vars.TF_VAR_task_cpu }}
       TF_VAR_task_memory: ${{ vars.TF_VAR_task_memory }}
+    outputs:
+      ecr_repository_url: ${{ steps.tf_outputs.outputs.ECR_REPOSITORY_URL }}
+      ecr_registry_host:  ${{ steps.tf_outputs.outputs.ECR_REGISTRY_HOST }}
+      ecr_repository_name: ${{ steps.tf_outputs.outputs.ECR_REPOSITORY_NAME }}
     defaults:
       run:
         shell: bash
@@ -82,6 +86,17 @@ jobs:
       - name: Deploy IaC (cdktf deploy)
         working-directory: ./iac
         run: npm run deploy
+      - name: Export Terraform Outputs
+        id: tf_outputs
+        working-directory: ./iac
+        run: |
+          npx cdktf output --json > tf_output.json
+          ECR_REPOSITORY_URL=$(jq -r '.ecr_repository_url' tf_outputs.json)
+          ECR_REGISTRY_HOST=$(jq -r '.ecr_registry_host' tf_outputs.json)
+          ECR_REPOSITORY_NAME=$(jq -r '.ecr_repository_name' tf_outputs.json)
+          echo "ECR_REPOSITORY_URL=$ECR_REPOSITORY_URL" >> $GITHUB_OUTPUT
+          echo "ECR_REGISTRY_HOST=$ECR_REGISTRY_HOST" >> $GITHUB_OUTPUT
+          echo "ECR_REPOSITORY_NAME=$ECR_REPOSITORY_NAME" >> $GITHUB_OUTPUT
 
   image-build-push:
     name: Build & Push Docker Image to ECR
@@ -90,36 +105,30 @@ jobs:
     env:
       AWS_REGION: ${{ vars.TF_VAR_region }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region:            ${{ env.AWS_REGION }}
-      - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v2
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: 'npm'
-          cache-dependency-path: iac/package-lock.json
-      - name: Use Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Install IaC dependencies
-        working-directory: ./iac
-        run: npm ci
-      - name: Retrieve ECR Repository URL from Terraform Output
-        id: tfoutput
-        working-directory: ./iac
+      - name: Debug Outputs
         run: |
-          REPO=$(npx cdktf output ecr_repository_url)
-          echo "repo_url=$REPO" >> $GITHUB_OUTPUT
-      - name: Build Docker image
-        working-directory: ./app
-        run: docker build -t ${{ steps.tfoutput.outputs.repo_url }} .
-      - name: Push Docker image
-        run: docker push ${{ steps.tfoutput.outputs.repo_url }}
+          echo "Repo URL: ${{ needs.deploy-iac.outputs.ecr_repository_url }}"
+          echo "Registry Host: ${{ needs.deploy-iac.outputs.ecr_registry_host }}"
+          echo "Repo Name: ${{ needs.deploy-iac.outputs.ecr_repository_name }}"
+      # - name: Checkout repository
+      #   uses: actions/checkout@v4
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region:            ${{ env.AWS_REGION }}
+      # - name: Login to Amazon ECR
+      #   uses: aws-actions/amazon-ecr-login@v2
+
+      # - name: Retrieve ECR Repository URL from Terraform Output
+      #   id: tfoutput
+      #   working-directory: ./iac
+      #   run: |
+      #     REPO=$(npx cdktf output ecr_repository_url)
+      #     echo "repo_url=$REPO" >> $GITHUB_OUTPUT
+      # - name: Build Docker image
+      #   working-directory: ./app
+      #   run: docker build -t ${{ steps.tfoutput.outputs.repo_url }} .
+      # - name: Push Docker image
+      #   run: docker push ${{ steps.tfoutput.outputs.repo_url }}
